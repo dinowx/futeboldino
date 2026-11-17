@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Copa do Brasil Quiz</title>
+<style>
+:root{--bg:#f4f6f1;--card:#fff;--tx:#14231a;--mu:#5c6b61;--ac:#12803f;--bd:#d9e0d6;--bad:#c0392b;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1712;--card:#18251d;--tx:#eaf2ec;--mu:#9fb1a5;--ac:#3ecf7a;--bd:#2c3d32;--bad:#ff6b5b;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.4}
+.w{max-width:980px;margin:0 auto;padding:16px}
+.hero{background:linear-gradient(135deg,#0b6b34,#2e8b4a 60%,#d4a900);color:#fff;border-radius:16px;padding:18px;margin:4px 0 8px}.hero h1{margin:0;color:#fff}.hero span{opacity:.9;font-size:.85rem}
+.vsr{display:flex;align-items:center;justify-content:center;gap:14px;font-size:1.1rem;margin:10px 0 14px;flex-wrap:wrap}.vsr b{display:inline-flex;align-items:center;gap:6px}.vsr i{font-style:normal;color:var(--mu);font-weight:700}
+h1{font-size:1.5rem;margin:.2em 0}h2{margin:.2em 0;font-size:1.15rem}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin:12px 0}
+.mu{color:var(--mu);font-size:.9rem}
+button{font:inherit;cursor:pointer;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;padding:10px 12px}
+button:hover{border-color:var(--ac)}
+.pri{background:var(--ac);color:#fff;border-color:var(--ac);font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.t{display:flex;align-items:center;gap:8px;text-align:left}
+.dot{width:18px;height:18px;border-radius:50%;flex:none;border:2px solid var(--bd)}
+.sb{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:700;font-size:1.1rem}
+.sc{font-size:2rem;color:var(--ac)}
+.pitch{position:relative;height:90px;border-radius:10px;background:repeating-linear-gradient(90deg,#2e8b4a 0 40px,#379953 40px 80px);margin:10px 0;overflow:hidden;border:2px solid #fff6}.pitch:after{content:"";position:absolute;left:50%;top:50%;width:46px;height:46px;border:2px solid #fff6;border-radius:50%;transform:translate(-50%,-50%)}
+.pitch:before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:2px solid #fff6}
+.ball{position:absolute;top:50%;font-size:26px;transform:translate(-50%,-50%);transition:left .8s}
+.q{font-weight:600;margin:6px 0 10px}
+.opts{display:grid;gap:8px}
+.opts button{text-align:left}
+.ok{background:#1f9d55!important;color:#fff;border-color:#1f9d55}
+.no{background:var(--bad)!important;color:#fff;border-color:var(--bad)}
+.bar{height:6px;background:var(--bd);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ac);width:100%}
+.log{max-height:130px;overflow:auto;font-size:.9rem}
+.tag{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.8rem;font-weight:700;color:#fff}
+.tree{display:flex;gap:28px;overflow-x:auto;padding:8px 4px}
+.col{display:flex;flex-direction:column;min-width:150px;flex:1}
+.cc{display:flex;flex-direction:column;flex:1}
+.rt{text-align:center;font-size:.72rem;color:var(--mu);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}.rt.cur{color:var(--ac);font-weight:700}
+.pr{flex:1;display:flex;flex-direction:column;justify-content:space-around;position:relative;padding:4px 0}
+.pr:not(.one):after{content:"";position:absolute;right:-14px;top:25%;bottom:25%;width:14px;border:2px solid var(--bd);border-left:0;border-radius:0 6px 6px 0}
+.mt{position:relative;border:1px solid var(--bd);border-radius:8px;background:var(--card)}
+.col+.col .mt:before{content:"";position:absolute;left:-14px;top:50%;width:14px;border-top:2px solid var(--bd)}
+.tr{display:flex;align-items:center;gap:6px;padding:6px 8px;font-size:.78rem}.tr+.tr{border-top:1px solid var(--bd)}.tr span:not(.dot){flex:1}.tr .dot{width:12px;height:12px}
+.tr.win{font-weight:700;color:var(--ac)}.tr.me{background:color-mix(in srgb,var(--ac) 16%,transparent)}
+.champ{text-align:center;border:2px solid var(--ac);border-radius:12px;padding:12px;background:var(--card);font-weight:700}
+.br>div{min-width:130px;flex:1}
+.br p{margin:4px 0;padding:4px 6px;border:1px solid var(--bd);border-radius:6px;font-size:.8rem}
+.br b{font-size:.8rem;color:var(--mu)}
+.win{font-weight:700;color:var(--ac)}.me{outline:2px solid var(--ac)}
+</style>
+</head>
+<body>
+<div class="w" id="app"></div>
+<script>
+const T=[["Flamengo","#c8102e"],["Palmeiras","#006437"],["Corinthians","#222"],["São Paulo","#e4002b"],["Santos","#999"],["Grêmio","#0d80bf"],["Internacional","#d71920"],["Cruzeiro","#0033a0"],["Atlético-MG","#111"],["Botafogo","#555"],["Fluminense","#7a1f3d"],["Vasco","#333"],["Bahia","#1e5aa8"],["Fortaleza","#1d4fa0"],["Athletico-PR","#c1121f"],["Bragantino","#e0b000"]];
+const RN=["Oitavas de final","Quartas de final","Semifinal","Final"];
+const Q=[
+["Quantas Copas do Mundo o Brasil já ganhou?","5","3","4","6"],
+["Quem é o maior artilheiro da história das Copas?","Miroslav Klose","Ronaldo","Pelé","Gerd Müller"],
+["Qual país sediou a Copa de 2022?","Catar","Rússia","Brasil","Emirados Árabes"],
+["Qual clube brasileiro foi campeão mundial em 1981?","Flamengo","Santos","Vasco","Cruzeiro"],
+["Quem venceu a Copa de 2002?","Brasil","Alemanha","Turquia","Itália"],
+["Quantas Copas Pelé ganhou?","3","2","4","5"],
+["Quem fez o gol do título alemão na final de 2014?","Götze","Müller","Klose","Schürrle"],
+["Qual clube brasileiro ganhou a primeira Libertadores, em 1962?","Santos","Palmeiras","Flamengo","Grêmio"],
+["Qual jogador é chamado de Fenômeno?","Ronaldo","Romário","Adriano","Rivaldo"],
+["Em qual estádio o Brasil perdeu a final da Copa de 1950?","Maracanã","Morumbi","Mineirão","Pacaembu"],
+["Quem foi campeão da Copa de 1994?","Brasil","Itália","Suécia","Holanda"],
+["Qual clube tem mais títulos da Copa do Brasil?","Cruzeiro","Flamengo","Grêmio","Corinthians"],
+["Quem foi campeão da Copa do Brasil em 2023?","São Paulo","Flamengo","Corinthians","Palmeiras"],
+["Quem ganhou a Copa do Mundo de 2010?","Espanha","Holanda","Alemanha","Uruguai"],
+["Quem tem mais Bolas de Ouro?","Lionel Messi","Cristiano Ronaldo","Michel Platini","Pelé"],
+["Quem é o maior artilheiro da Seleção Brasileira?","Neymar","Pelé","Ronaldo","Romário"],
+["Quem venceu a Copa de 2018?","França","Croácia","Bélgica","Brasil"],
+["Qual clube é chamado de Timão?","Corinthians","Santos","Flamengo","Grêmio"],
+["Quem o Palmeiras enfrentou na final da Libertadores de 2021?","Flamengo","River Plate","Boca Juniors","Atlético-MG"],
+["Quem era o técnico do Brasil pentacampeão em 2002?","Felipão","Zagallo","Parreira","Dunga"],
+["Quem é conhecido como Rei do Futebol?","Pelé","Zico","Garrincha","Maradona"],
+["Quem venceu a Copa de 2022?","Argentina","França","Croácia","Marrocos"],
+["Em que ano o Brasil ganhou sua primeira Copa?","1958","1950","1962","1970"],
+["Qual clube gaúcho foi campeão mundial em 1983?","Grêmio","Internacional","Juventude","Caxias"],
+["Quem o Internacional venceu na final do Mundial de 2006?","Barcelona","Bayern","Milan","Liverpool"],
+["Quem era o goleiro do Brasil em 1994?","Taffarel","Dida","Marcos","Júlio César"],
+["Qual é o apelido do Atlético Mineiro?","Galo","Raposa","Leão","Tricolor"],
+["Em que país nasceu Cristiano Ronaldo?","Portugal","Espanha","Brasil","Itália"],
+["Qual clube é chamado de Gigante da Colina?","Vasco","Botafogo","Fluminense","Bahia"],
+["Quantos jogadores cada time tem em campo?","11","10","12","9"],
+["Em qual cidade fica o Maracanã?","Rio de Janeiro","São Paulo","Brasília","Belo Horizonte"],
+["Qual seleção ganhou mais Copas do Mundo, depois do Brasil?","Alemanha e Itália (4)","Argentina","França","Uruguai"]
+];
+const $=id=>document.getElementById(id),R=Math.random,app=$("app");
+const sh=a=>a.map(x=>[R(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+const dot=t=>`<span class="dot" style="background:${T[t][1]}"></span>`;
+let pool=[],G={},M={},tm;
+function nq(){if(!pool.length)pool=sh(Q.slice());const q=pool.pop();return{q:q[0],c:q[1],o:sh(q.slice(1))}}
+
+function menu(){
+ clearInterval(tm);
+ app.innerHTML=`<div class="hero"><h1>⚽ Copa do Brasil Quiz</h1><span>Mata-mata · futebol brasileiro e mundial</span></div><p class="mu">Mata-mata com 16 times. Nos lances de ataque e defesa surge uma pergunta sobre futebol brasileiro e mundial: acertar decide o lance. Empate vai para os pênaltis.</p><div class="card"><h2>Escolha seu time</h2><div class="grid">${T.map((t,i)=>`<button class="t" style="border-left:6px solid ${T[i][1]}" onclick="start(${i})">${dot(i)}${t[0]}</button>`).join("")}</div></div>`;
+}
+function start(me){
+ const ids=sh(T.map((_,i)=>i));
+ G={me,r:0,rounds:[ids],res:[],over:false};
+ bracket();
+}
+function bHTML(){
+ let h='<div class="tree">';
+ for(let ri=0;ri<4;ri++){
+  const rd=G.rounds[ri],n=8>>ri,ms=[];
+  h+=`<div class="col"><b class="rt${ri==G.r&&!G.over?" cur":""}">${RN[ri]}</b>`;
+  for(let k=0;k<n;k++){
+   const a=rd?rd[2*k]:null,b=rd?rd[2*k+1]:null,w=G.res[ri]&&G.res[ri][k];
+   const row=t=>t==null?`<div class="tr"><span class="dot"></span><span class="mu">A definir</span></div>`:`<div class="tr${t==G.me?" me":""}${w===t?" win":""}">${dot(t)}<span>${T[t][0]}</span>${w===t?"✓":""}</div>`;
+   ms.push(`<div class="mt">${row(a)}${row(b)}</div>`);
+  }
+  if(ri<3){let p="";for(let k=0;k<n;k+=2)p+=`<div class="pr">${ms[k]}${ms[k+1]}</div>`;h+=`<div class="cc">${p}</div>`}
+  else h+=`<div class="cc"><div class="pr one">${ms[0]}</div></div>`;
+  h+="</div>";
+ }
+ const ch=G.res[3]&&G.res[3][0];
+ return h+`<div class="col"><b class="rt">Campeão</b><div class="cc"><div class="pr one"><div class="champ">${ch!=null?`${dot(ch)}<br>${T[ch][0]}`:""}<div style="font-size:2.2rem">🏆</div></div></div></div></div></div>`;
+}
+function showTree(){G.over=true;app.innerHTML=`<div class="hero"><h1>Chaveamento final</h1><span>Copa do Brasil</span></div><div class="card">${bHTML()}</div><button class="pri" onclick="menu()">Jogar de novo</button>`}
+function bracket(){
+ const cur=G.rounds[G.r],pairs=[];
+ for(let i=0;i<cur.length;i+=2)pairs.push([cur[i],cur[i+1]]);
+ G.pairs=pairs;const mine=pairs.find(p=>p.includes(G.me));G.mine=mine;
+ app.innerHTML=`<div class="hero"><h1>${RN[G.r]}</h1><span>Copa do Brasil · você joga como ${T[G.me][0]}</span></div><div class="card">${bHTML()}</div><div class="card" style="text-align:center"><h2>Seu próximo jogo</h2><div class="vsr"><b>${dot(mine[0])}${T[mine[0]][0]}</b><i>x</i><b>${T[mine[1]][0]}${dot(mine[1])}</b></div><button class="pri" onclick="kick()">Começar a partida</button> <button onclick="menu()">Sair</button></div>`;
+}
+function bracketOld(){
+ const cur=G.rounds[G.r],pairs=[];
+ for(let i=0;i<cur.length;i+=2)pairs.push([cur[i],cur[i+1]]);
+ G.pairs=pairs;
+ const mine=pairs.find(p=>p.includes(G.me));
+ const cols=G.rounds.map((rd,ri)=>{
+  let h=`<div><b>${RN[ri]}</b>`;
+  for(let i=0;i<rd.length;i+=2){const w=G.res[ri]&&G.res[ri][i/2];
+   h+=[rd[i],rd[i+1]].map(t=>`<p class="${t==G.me?"me ":""}${w===t?"win":""}">${dot(t)} ${T[t][0]}</p>`).join("")+`<div style="height:6px"></div>`}
+  return h+"</div>"}).join("");
+ app.innerHTML=`<h1>${RN[G.r]}</h1><div class="card br">${cols}</div><div class="card"><h2>Seu jogo</h2><p>${dot(mine[0])}<b>${T[mine[0]][0]}</b> x <b>${T[mine[1]][0]}</b>${dot(mine[1])}</p><button class="pri" onclick="kick()">Começar a partida</button> <button onclick="menu()">Sair</button></div>`;
+ G.mine=mine;
+}
+function kick(){
+ const opp=G.mine[0]==G.me?G.mine[1]:G.mine[0];
+ const mins=sh([4,9,15,22,29,36,43,51,58,65,72,79,86]).slice(0,8).sort((a,b)=>a-b);
+ M={opp,a:0,b:0,i:0,mins,log:[]};
+ draw();setTimeout(moment,600);
+}
+function draw(extra){
+ const m=M;
+ app.innerHTML=`<div class="card"><div class="sb"><span>${dot(G.me)}${T[G.me][0]}</span><span class="sc">${m.a} x ${m.b}</span><span>${T[m.opp][0]}${dot(m.opp)}</span></div><p class="mu" style="margin:4px 0">${RN[G.r]} · <span id="min">${m.cur||0}'</span></p><div class="pitch"><span class="ball" id="ball" style="left:50%">⚽</span></div><div id="box"></div></div><div class="card log" id="log">${m.log.join("<br>")}</div>`;
+}
+function say(t){M.log.unshift(t);$("log").innerHTML=M.log.join("<br>")}
+function ask(title,color,cb){
+ const q=nq();let t=15,done=false;
+ $("box").innerHTML=`<span class="tag" style="background:${color}">${title}</span><div class="q">${q.q}</div><div class="bar"><i id="tb"></i></div><div class="opts" style="margin-top:10px">${q.o.map((o,i)=>`<button data-i="${i}">${o}</button>`).join("")}</div>`;
+ const bs=[...$("box").querySelectorAll("button")];
+ const fin=(ok,btn)=>{if(done)return;done=true;clearInterval(tm);
+  bs.forEach(b=>{b.disabled=true;if(b.textContent==q.c)b.classList.add("ok")});
+  if(btn&&!ok)btn.classList.add("no");
+  setTimeout(()=>cb(ok),1100)};
+ bs.forEach(b=>b.onclick=()=>fin(b.textContent==q.c,b));
+ tm=setInterval(()=>{t-=.1;$("tb").style.width=(t/15*100)+"%";if(t<=0)fin(false)},100);
+}
+function moment(){
+ if(M.i>=M.mins.length)return endReg();
+ const m=M,min=m.mins[m.i++];m.cur=min;$("min").textContent=min+"'";
+ const att=R()<.5,pen=.03*G.r;
+ $("ball").style.left=att?"80%":"20%";
+ if(att){
+  ask("⚔️ ATAQUE! Responda para finalizar","#12803f",ok=>{
+   if(R()<(ok?.75:.1)){m.a++;say(`${min}' ⚽ GOL do ${T[G.me][0]}!`)}
+   else say(`${min}' ${ok?"Chute defendido pelo goleiro.":"Lance perdido, a bola foi para fora."}`);
+   draw2();});
+ }else{
+  ask("🛡️ DEFESA! Responda para evitar o gol","#c0392b",ok=>{
+   if(R()<(ok?.1+pen:.7+pen)){m.b++;say(`${min}' 😬 Gol do ${T[m.opp][0]}.`)}
+   else say(`${min}' ${ok?"Grande desarme, perigo afastado!":"Susto, mas a bola saiu."}`);
+   draw2();});
+ }
+}
+function draw2(){
+ const m=M,l=m.log;draw();m.log=l;$("log").innerHTML=l.join("<br>");$("min").textContent=m.cur+"'";
+ $("box").innerHTML=`<p class="mu">Bola rolando...</p>`;setTimeout(moment,700);
+}
+function endReg(){
+ $("min").textContent="90'";
+ if(M.a!=M.b)return finish(M.a>M.b);
+ say("Empate! Vamos para os pênaltis.");
+ M.pa=0;M.pb=0;M.pn=0;M.pl=[];
+ setTimeout(penalty,900);
+}
+function penalty(){
+ const m=M;
+ if(m.pn>=5&&m.pa!=m.pb)return finish(m.pa>m.pb);
+ $("min").textContent=`Pênaltis ${m.pa} x ${m.pb}`;
+ ask(`🎯 PÊNALTI ${m.pn+1}: acerte para converter`,"#8e44ad",ok=>{
+  const mine=R()<(ok?.88:.25),his=R()<.72;
+  if(mine)m.pa++;if(his)m.pb++;
+  say(`Pênalti ${m.pn+1}: você ${mine?"converteu ✅":"perdeu ❌"} · ${T[m.opp][0]} ${his?"converteu ✅":"perdeu ❌"}`);
+  m.pn++;
+  if(m.pn==5&&m.pa==m.pb)say("Segue empatado! Pênaltis alternados.");
+  $("min").textContent=`Pênaltis ${m.pa} x ${m.pb}`;
+  $("box").innerHTML="";setTimeout(penalty,800);
+ });
+}
+function finish(won){
+ const m=M;
+ const sc=m.pn?`${m.a} x ${m.b} (pên. ${m.pa} x ${m.pb})`:`${m.a} x ${m.b}`;
+ const winners=G.pairs.map(p=>p.includes(G.me)?(won?G.me:m.opp):(R()<.5?p[0]:p[1]));
+ G.res[G.r]=winners;
+ const last=G.r==3;
+ let h=`<h1>${won?"🏆 Vitória!":"Eliminado"}</h1><div class="card"><p>${T[G.me][0]} ${sc} ${T[m.opp][0]}</p>`;
+ if(!won)h+=`<p>Seu time caiu nas ${RN[G.r].toLowerCase()}. Campeão desta edição: ${T[simulate(winners)][0]}.</p><button class="pri" onclick="showTree()">Ver chaveamento completo</button> <button onclick="menu()">Jogar de novo</button>`;
+ else if(last)h+=`<p style="font-size:1.3rem">🏆 ${T[G.me][0]} é o campeão da Copa do Brasil!</p><button class="pri" onclick="showTree()">Ver chaveamento completo</button> <button onclick="menu()">Jogar de novo</button>`;
+ else h+=`<p>${T[G.me][0]} avança para a próxima fase.</p><button class="pri" onclick="nextR()">Ver chaveamento</button>`;
+ app.innerHTML=h+"</div>";
+ G.w=winners;
+}
+function simulate(w){
+ let cur=w;
+ for(let r=G.r+1;r<4;r++){const n=[];for(let i=0;i<cur.length;i+=2)n.push(R()<.5?cur[i]:cur[i+1]);G.rounds[r]=cur;G.res[r-1]=G.res[r-1]||cur;cur=n}
+ G.res[3]=[cur[0]];return cur[0];
+}
+function nextR(){G.rounds[G.r+1]=G.w;G.r++;bracket()}
+menu();
+</script>
+</body>
+</html>
