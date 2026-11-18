@@ -35,6 +35,7 @@ button:hover{border-color:var(--ac)}
 .bar i{display:block;height:100%;background:var(--ac);width:100%}
 .log{max-height:130px;overflow:auto;font-size:.9rem}
 .tag{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.8rem;font-weight:700;color:#fff}
+.pl{border:1px solid var(--bd);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px;background:var(--card)}.pl.r1{border-left:5px solid #b87333}.pl.r2{border-left:5px solid #9aa5ad}.pl.r3{border-left:5px solid #d4a900}.pl.r4{border-left:5px solid #8e44ad}button:disabled{opacity:.45;cursor:not-allowed}
 .tree{display:flex;gap:28px;overflow-x:auto;padding:8px 4px}
 .col{display:flex;flex-direction:column;min-width:150px;flex:1}
 .cc{display:flex;flex-direction:column;flex:1}
@@ -94,16 +95,139 @@ const Q=[
 const $=id=>document.getElementById(id),R=Math.random,app=$("app");
 const sh=a=>a.map(x=>[R(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
 const dot=t=>`<span class="dot" style="background:${T[t][1]}"></span>`;
-let pool=[],G={},M={},tm;
-function nq(){if(!pool.length)pool=sh(Q.slice());const q=pool.pop();return{q:q[0],c:q[1],o:sh(q.slice(1))}}
+let pools=[[],[],[],[]],G={},M={},tm;
+const Q1=[
+["Quem foi o artilheiro da Copa de 2002?","Ronaldo","Rivaldo","Klose","Ronaldinho Gaúcho"],
+["Qual clube venceu a Libertadores de 2022?","Flamengo","Athletico-PR","Palmeiras","Vélez Sarsfield"],
+["Em que ano o Corinthians foi campeão do primeiro Mundial de Clubes da FIFA?","2000","1998","2005","2012"],
+["Em qual cidade foi jogado o 7 a 1 da Alemanha sobre o Brasil?","Belo Horizonte","Rio de Janeiro","São Paulo","Fortaleza"],
+["Quem era o técnico do Brasil tricampeão em 1970?","Zagallo","Telê Santana","Vicente Feola","Parreira"],
+["Quem marcou o gol do título da Espanha na final de 2010?","Iniesta","Xavi","David Villa","Fernando Torres"],
+["Por qual clube Ronaldinho Gaúcho foi eleito melhor do mundo em 2005?","Barcelona","PSG","Milan","Grêmio"],
+["Qual clube brasileiro foi campeão mundial em 1992?","São Paulo","Santos","Grêmio","Palmeiras"],
+["Quantas Libertadores o Palmeiras possui?","3","2","4","5"],
+["Quem é o maior artilheiro da história do Flamengo?","Zico","Gabigol","Romário","Júnior"]];
+const Q2=[
+["Quem foi o artilheiro da Copa de 1958, com 13 gols?","Just Fontaine","Pelé","Vavá","Hans Schäfer"],
+["Em que ano foi criada a Copa do Brasil?","1989","1985","1992","1995"],
+["Qual clube foi o primeiro campeão da Copa do Brasil, em 1989?","Grêmio","Sport","Flamengo","Cruzeiro"],
+["Qual clube foi o primeiro campeão da Libertadores, em 1960?","Peñarol","Santos","Olimpia","Boca Juniors"],
+["Qual seleção foi vice-campeã da Copa de 1938?","Hungria","Tchecoslováquia","Brasil","Argentina"],
+["Quem fez o quarto gol do Brasil na final de 1970?","Carlos Alberto Torres","Pelé","Jairzinho","Gérson"],
+["Quem foi campeão da Copa do Brasil de 2001?","Corinthians","Grêmio","Cruzeiro","Flamengo"],
+["Qual seleção surpreendeu e ganhou a Eurocopa de 2004?","Grécia","Portugal","República Tcheca","Dinamarca"],
+["Quantos gols Pelé marcou em Copas do Mundo?","12","10","14","15"],
+["Qual estádio recebeu a final da primeira Copa, em 1930?","Centenário (Montevidéu)","Maracanã","Wembley","Azteca"]];
+const Q3=[
+["Quem fez o gol mais rápido da história das Copas, com 11 segundos?","Hakan Şükür","Clint Dempsey","Václav Mašek","Bryan Robson"],
+["Qual seleção foi a primeira campeã da Eurocopa, em 1960?","União Soviética","Iugoslávia","Espanha","Tchecoslováquia"],
+["Quem tem mais jogos disputados em Copas do Mundo?","Lionel Messi","Lothar Matthäus","Paolo Maldini","Cafu"],
+["Quem o Santos venceu na final da Libertadores de 1963?","Boca Juniors","Peñarol","Independiente","Olimpia"],
+["Quem era o técnico do Brasil na Copa de 1982?","Telê Santana","Zagallo","Cláudio Coutinho","Carlos Alberto Parreira"],
+["Qual seleção eliminou o Brasil nos pênaltis nas quartas da Copa de 1986?","França","Argentina","Itália","Alemanha Ocidental"],
+["Quem foi o artilheiro da Copa de 1950, com 9 gols?","Ademir de Menezes","Zizinho","Jair","Chico"],
+["Qual clube foi campeão do primeiro Campeonato Brasileiro, em 1971?","Atlético-MG","São Paulo","Palmeiras","Santos"],
+["Qual clube foi campeão da Copa do Brasil de 1990?","Flamengo","Sport","Cruzeiro","Palmeiras"],
+["Quem foi eleito o melhor jogador da Copa de 1994?","Romário","Roberto Baggio","Stoichkov","Dunga"]];
+Q.push(
+["Qual é a cor da camisa tradicional da Seleção Brasileira?","Amarela","Azul","Verde","Branca"],
+["Quantos tempos tem uma partida de futebol?","2","3","4","1"],
+["Qual a duração regulamentar de uma partida de futebol?","90 minutos","80 minutos","100 minutos","120 minutos"],
+["Quem venceu a Copa do Mundo de 1998?","França","Brasil","Itália","Croácia"],
+["Qual clube é chamado de Mengão?","Flamengo","Fluminense","Botafogo","Vasco"],
+["Qual clube é chamado de Verdão?","Palmeiras","Coritiba","Juventude","Goiás"],
+["Qual clube é chamado de Peixe?","Santos","Bahia","Fortaleza","Sport"],
+["Qual clube é chamado de Raposa?","Cruzeiro","Atlético-MG","América-MG","Vitória"],
+["Qual clube é chamado de Imortal Tricolor?","Grêmio","Internacional","São Paulo","Fluminense"],
+["Em qual clube brasileiro Neymar começou a carreira profissional?","Santos","Flamengo","Corinthians","Palmeiras"],
+["Qual país sediou a Copa do Mundo de 2014?","Brasil","África do Sul","Alemanha","Rússia"]);
+Q1.push(
+["Qual goleiro marcou mais de 100 gols na carreira?","Rogério Ceni","Marcos","Dida","Taffarel"],
+["Quem derrotou o Flamengo na final do Mundial de Clubes de 2019?","Liverpool","Real Madrid","Bayern","Chelsea"],
+["Qual clube brasileiro foi campeão da Libertadores de 2013?","Atlético-MG","Fluminense","Grêmio","Botafogo"],
+["Qual clube foi campeão invicto da Libertadores de 2012?","Corinthians","Santos","Fluminense","Internacional"],
+["Quem foi o artilheiro da Copa do Mundo de 2014?","James Rodríguez","Neymar","Messi","Thomas Müller"],
+["Qual seleção o Brasil venceu na final da Copa América de 2019?","Peru","Argentina","Chile","Colômbia"],
+["Em que ano Neymar foi para o PSG?","2017","2013","2015","2019"],
+["Quem era o técnico do Brasil na Copa de 2018?","Tite","Dunga","Felipão","Mano Menezes"],
+["Qual seleção eliminou o Brasil nas quartas da Copa de 2018?","Bélgica","Croácia","França","Alemanha"],
+["Qual seleção eliminou o Brasil nos pênaltis na Copa de 2022?","Croácia","Argentina","Marrocos","Holanda"],
+["Qual brasileiro foi eleito o melhor do mundo em 2007?","Kaká","Ronaldinho Gaúcho","Rivaldo","Robinho"],
+["Qual clube ganhou a Copa Sul-Americana de 2016 após a tragédia aérea?","Chapecoense","Atlético Nacional","Independiente","Santos"],
+["Quem foi campeão brasileiro em 2024?","Botafogo","Palmeiras","Fortaleza","Flamengo"],
+["Quem foi campeão da Copa do Brasil de 2024?","Flamengo","Atlético-MG","Corinthians","Grêmio"],
+["Em que ano o Brasil foi campeão da Copa das Confederações pela última vez?","2013","2009","2005","2017"]);
+Q2.push(
+["Quem foi o artilheiro da Copa de 1970, com 10 gols?","Gerd Müller","Pelé","Jairzinho","Teofílo Cubillas"],
+["Quem marcou o gol da vitória do Uruguai na final de 1950?","Ghiggia","Schiaffino","Varela","Míguez"],
+["Quem fez três gols na final da Copa de 1966?","Geoff Hurst","Bobby Charlton","Martin Peters","Roger Hunt"],
+["Contra qual seleção Maradona fez o gol da Mão de Deus?","Inglaterra","Alemanha Ocidental","Itália","Bélgica"],
+["Quem o Flamengo venceu na final do Mundial de 1981?","Liverpool","Real Madrid","Bayern","Juventus"],
+["Em quais anos o Santos de Pelé foi campeão mundial?","1962 e 1963","1960 e 1961","1958 e 1962","1963 e 1965"],
+["Quem era o técnico do Palmeiras campeão da Libertadores de 2020 e 2021?","Abel Ferreira","Felipão","Vanderlei Luxemburgo","Marcelo Oliveira"],
+["Qual clube catarinense foi campeão da Copa do Brasil de 1991?","Criciúma","Figueirense","Avai","Chapecoense"],
+["Qual clube foi campeão da Copa do Brasil de 1999?","Juventude","Grêmio","Cruzeiro","Palmeiras"],
+["Quem foi campeão da Copa do Brasil de 2011?","Vasco","Santos","Fluminense","Corinthians"],
+["Qual clube pernambucano foi campeão da Copa do Brasil de 2008?","Sport","Náutico","Santa Cruz","Salgueiro"],
+["Quantas Copas do Brasil o Cruzeiro conquistou?","6","4","5","7"],
+["Quem foi expulso na final da Copa de 2006?","Zidane","Materazzi","Buffon","Henry"],
+["Quem era o goleiro da Itália campeã em 2006?","Buffon","Peruzzi","Zoff","Toldo"],
+["Qual seleção venceu a Eurocopa de 2016?","Portugal","França","Alemanha","Espanha"]);
+Q3.push(
+["Quem fez dois gols na final do Mundial de 1981 pelo Flamengo?","Nunes","Zico","Adílio","Tita"],
+["Qual seleção venceu a Copa de 1954 surpreendendo a Hungria na final?","Alemanha Ocidental","Uruguai","Áustria","Brasil"],
+["Quem foi o artilheiro da Copa de 1990?","Salvatore Schillaci","Roger Milla","Lothar Matthäus","Gary Lineker"],
+["Quem foi o artilheiro da Copa de 1998?","Davor Šuker","Ronaldo","Batistuta","Vieri"],
+["Quem foi o artilheiro da Copa de 2006?","Miroslav Klose","Ronaldo","Hernán Crespo","Zidane"],
+["Quem foi campeão mundial como jogador (1958 e 1962) e como técnico (1970)?","Zagallo","Telê Santana","Parreira","Scolari"],
+["Qual foi o placar da final da Copa de 1958, entre Brasil e Suécia?","5 a 2","3 a 1","4 a 2","3 a 0"],
+["Quem perdeu o pênalti decisivo na final da Copa de 1994?","Roberto Baggio","Franco Baresi","Massaro","Albertini"],
+["Qual clube mineiro ganhou a Libertadores de 1976?","Cruzeiro","Atlético-MG","América-MG","Villa Nova"],
+["Quem foi o vice-campeão da Libertadores de 1997, derrotado pelo Cruzeiro?","Sporting Cristal","River Plate","Colón","Olimpia"],
+["Quem o Palmeiras venceu na final da Libertadores de 1999?","Deportivo Cali","Boca Juniors","Olimpia","Colón"],
+["Quem era o goleiro do Brasil na final da Copa de 1950?","Barbosa","Gilmar","Castilho","Taffarel"],
+["Quem era o técnico do Brasil campeão da Copa América de 2007?","Dunga","Parreira","Mano Menezes","Luxemburgo"],
+["Quem fez o gol do título do São Paulo no Mundial de 2005?","Mineiro","Amóroso","Aloísio","Rogério Ceni"],
+["Quem fez o gol do título do Internacional no Mundial de 2006?","Adriano Gabiru","Fernandão","Iarley","Rafael Sóbis"]);
+const L=[Q,Q1,Q2,Q3];
+const P={GOL:[["Marcos",60],["Taffarel",150],["Rogério Ceni",300],["Gilmar",500]],DEF:[["Roque Júnior",60],["Lúcio",150],["Cafu",300],["Nílton Santos",500]],MEI:[["Dunga",60],["Falcão",150],["Zico",300],["Didi",500]],ATA:[["Bebeto",60],["Romário",150],["Ronaldo",300],["Pelé",500]]};
+const PN={GOL:"Goleiro",DEF:"Defesa",MEI:"Meio-campo",ATA:"Ataque"},RAR=["","Bronze","Prata","Ouro","Lendário"];
+const RK0=()=>({pts:0,played:0,wins:0,titles:0,corr:0,ans:0,best:0,hist:[]});
+let S={tokens:0,sq:{GOL:0,DEF:0,MEI:0,ATA:0},own:[],rk:RK0()};
+try{const x=JSON.parse(localStorage.getItem("cdbq"));if(x&&x.sq&&x.own)S=x}catch(e){}
+S.rk=S.rk||RK0();
+function sv(){try{localStorage.setItem("cdbq",JSON.stringify(S))}catch(e){}}
+function bon(t){return t=="A"?S.sq.ATA+S.sq.MEI:S.sq.GOL+S.sq.DEF}
+function reward(lv){const m=M;m.streak=(m.streak||0)+1;const k=S.rk,rp=[2,3,5,8][lv];k.corr++;k.pts+=rp;G.pts=(G.pts||0)+rp;if(m.streak>k.best)k.best=m.streak;const g=[10,15,25,40][lv]+(m.streak>=3?5*Math.min(m.streak-2,5):0);S.tokens+=g;G.earn=(G.earn||0)+g;sv();say(`🪙 +${g} tokens`+(m.streak>=3?` · sequência de ${m.streak} acertos!`:""))}
+function shop(g){
+ let h=`<div class="hero"><h1>🪙 Elenco e Loja</h1><span>Saldo: ${S.tokens} tokens · Ataque +${bon("A")} · Defesa +${bon("D")}</span></div><p class="mu">Ganhe tokens acertando perguntas (mais nas fases difíceis), com sequência de acertos e vitórias. Cada nível de atacante e meia dá +2% de chance de gol; cada nível de goleiro e zagueiro tira 2% de chance de sofrer gol. O progresso fica salvo neste navegador.</p>`;
+ for(const pos in P){h+=`<div class="card"><h2>${PN[pos]} <span class="mu">· titular: ${S.sq[pos]?P[pos][S.sq[pos]-1][0]:"Reserva"}</span></h2><div class="grid">`;
+  P[pos].forEach((p,i)=>{const lv=i+1,own=S.own.includes(pos+lv),tit=S.sq[pos]==lv;
+   h+=`<div class="pl r${lv}"><b>${p[0]}</b><div class="mu">${RAR[lv]} · +${lv}</div>${own?`<span class="tag" style="background:var(--ac);text-align:center">${tit?"Titular":"No elenco"}</span>`:`<button ${S.tokens<p[1]?"disabled":""} onclick="buy('${pos}',${lv},${g?1:0})">🪙 ${p[1]}</button>`}</div>`});
+  h+="</div></div>"}
+ app.innerHTML=h+`<button class="pri" onclick="${g?"bracket()":"menu()"}">Voltar</button> <button onclick="resetS(${g?1:0})">Zerar progresso</button>`;
+}
+function buy(pos,lv,g){const p=P[pos][lv-1];if(S.tokens<p[1]||S.own.includes(pos+lv))return;S.tokens-=p[1];S.own.push(pos+lv);S.sq[pos]=Math.max(S.sq[pos],lv);sv();shop(g)}
+function resetS(g){S={tokens:0,sq:{GOL:0,DEF:0,MEI:0,ATA:0},own:[],rk:RK0()};sv();shop(g)}
+const TI=[["Várzea",0],["Juvenil",100],["Profissional",300],["Craque",700],["Ídolo",1500],["Lenda",3000]],TC=["#6f766f","#b87333","#7d8a93","#b8920a","#8e44ad","#c0392b"];
+function tier(p){let i=0;TI.forEach((t,j)=>{if(p>=t[1])i=j});return{i,n:TI[i][0],lo:TI[i][1],hi:TI[i+1]?TI[i+1][1]:null}}
+function rbox(){const k=S.rk,t=tier(k.pts),pc=t.hi?Math.round((k.pts-t.lo)/(t.hi-t.lo)*100):100;return `<span class="tag" style="background:${TC[t.i]}">${t.n}</span> <b>${k.pts}</b> pts${t.hi?` · faltam ${t.hi-k.pts} para ${TI[t.i+1][0]}`:" · rank máximo!"}<div class="bar" style="margin-top:6px"><i style="width:${pc}%"></i></div>`}
+function rank(){
+ const k=S.rk,pa=k.ans?Math.round(k.corr/k.ans*100):0;
+ let h=`<div class="hero"><h1>🏅 Ranking</h1><span>Seu nível como treinador</span></div><div class="card">${rbox()}</div><div class="card"><h2>Estatísticas</h2><div class="grid">${[["Títulos",k.titles],["Jogos disputados",k.played],["Vitórias",k.wins],["Aproveitamento no quiz",pa+"%"],["Melhor sequência",k.best]].map(x=>`<div class="pl"><span class="mu">${x[0]}</span><b style="font-size:1.4rem">${x[1]}</b></div>`).join("")}</div></div>`;
+ h+=`<div class="card"><h2>Melhores campanhas</h2>${k.hist.length?k.hist.map((c,i)=>`<p style="display:flex;gap:8px;align-items:center;margin:6px 0">${["🥇","🥈","🥉","4º","5º"][i]} ${dot(c.t)}<b>${T[c.t][0]}</b><span class="mu" style="flex:1">${c.f} · ${c.d}</span><b>${c.p} pts</b></p>`).join(""):'<p class="mu">Termine uma campanha para entrar no ranking.</p>'}</div>`;
+ h+=`<div class="card"><h2>Escada de ranks</h2>${TI.map((t,i)=>`<p style="margin:6px 0"><span class="tag" style="background:${TC[i]}">${t[0]}</span> a partir de ${t[1]} pts</p>`).join("")}<p class="mu">Pontos: acerto 2, 3, 5 ou 8 conforme o nível · vitória 20 + 10 por fase · título +100 · eliminação 5 por fase alcançada.</p></div><button class="pri" onclick="menu()">Voltar</button>`;
+ app.innerHTML=h;
+}
+function nq(){const lv=Math.min(G.r,3);if(!pools[lv].length)pools[lv]=sh(L[lv].slice());const q=pools[lv].pop();return{q:q[0],c:q[1],o:sh(q.slice(1)),lv}}
 
 function menu(){
  clearInterval(tm);
- app.innerHTML=`<div class="hero"><h1>⚽ Copa do Brasil Quiz</h1><span>Mata-mata · futebol brasileiro e mundial</span></div><p class="mu">Mata-mata com 16 times. Nos lances de ataque e defesa surge uma pergunta sobre futebol brasileiro e mundial: acertar decide o lance. Empate vai para os pênaltis.</p><div class="card"><h2>Escolha seu time</h2><div class="grid">${T.map((t,i)=>`<button class="t" style="border-left:6px solid ${T[i][1]}" onclick="start(${i})">${dot(i)}${t[0]}</button>`).join("")}</div></div>`;
+ app.innerHTML=`<div class="hero"><h1>⚽ Copa do Brasil Quiz</h1><span>Mata-mata · futebol brasileiro e mundial</span></div><p class="mu">Mata-mata com 16 times. Nos lances de ataque e defesa surge uma pergunta sobre futebol brasileiro e mundial: acertar decide o lance. Empate vai para os pênaltis. A cada fase as perguntas ficam mais difíceis e o tempo para responder diminui (15s, 15s, 12s e 10s na final).</p><div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><span>🪙 <b>${S.tokens}</b> tokens · Ataque +${bon("A")} · Defesa +${bon("D")}</span><button class="pri" onclick="shop()">Elenco e loja</button></div><div class="card">${rbox()}<button style="margin-top:8px" onclick="rank()">🏅 Ver ranking</button></div><div class="card"><h2>Escolha seu time</h2><div class="grid">${T.map((t,i)=>`<button class="t" style="border-left:6px solid ${T[i][1]}" onclick="start(${i})">${dot(i)}${t[0]}</button>`).join("")}</div></div>`;
 }
 function start(me){
  const ids=sh(T.map((_,i)=>i));
- G={me,r:0,rounds:[ids],res:[],over:false};
+ G={me,r:0,rounds:[ids],res:[],over:false,pts:0};
  bracket();
 }
 function bHTML(){
@@ -128,7 +252,7 @@ function bracket(){
  const cur=G.rounds[G.r],pairs=[];
  for(let i=0;i<cur.length;i+=2)pairs.push([cur[i],cur[i+1]]);
  G.pairs=pairs;const mine=pairs.find(p=>p.includes(G.me));G.mine=mine;
- app.innerHTML=`<div class="hero"><h1>${RN[G.r]}</h1><span>Copa do Brasil · você joga como ${T[G.me][0]}</span></div><div class="card">${bHTML()}</div><div class="card" style="text-align:center"><h2>Seu próximo jogo</h2><div class="vsr"><b>${dot(mine[0])}${T[mine[0]][0]}</b><i>x</i><b>${T[mine[1]][0]}${dot(mine[1])}</b></div><button class="pri" onclick="kick()">Começar a partida</button> <button onclick="menu()">Sair</button></div>`;
+ app.innerHTML=`<div class="hero"><h1>${RN[G.r]}</h1><span>Copa do Brasil · você joga como ${T[G.me][0]}</span></div><div class="card">${bHTML()}</div><div class="card" style="text-align:center"><h2>Seu próximo jogo</h2><div class="vsr"><b>${dot(mine[0])}${T[mine[0]][0]}</b><i>x</i><b>${T[mine[1]][0]}${dot(mine[1])}</b></div><p class="mu">🪙 ${S.tokens} tokens · Ataque +${bon("A")} · Defesa +${bon("D")}</p><button class="pri" onclick="kick()">Começar a partida</button> <button onclick="shop(1)">🪙 Elenco e loja</button> <button onclick="menu()">Sair</button></div>`;
 }
 function bracketOld(){
  const cur=G.rounds[G.r],pairs=[];
@@ -146,41 +270,86 @@ function bracketOld(){
 function kick(){
  const opp=G.mine[0]==G.me?G.mine[1]:G.mine[0];
  const mins=sh([4,9,15,22,29,36,43,51,58,65,72,79,86]).slice(0,8).sort((a,b)=>a-b);
- M={opp,a:0,b:0,i:0,mins,log:[]};
+ M={opp,a:0,b:0,i:0,mins,log:[],streak:0};G.earn=0;
  draw();setTimeout(moment,600);
 }
 function draw(extra){
  const m=M;
- app.innerHTML=`<div class="card"><div class="sb"><span>${dot(G.me)}${T[G.me][0]}</span><span class="sc">${m.a} x ${m.b}</span><span>${T[m.opp][0]}${dot(m.opp)}</span></div><p class="mu" style="margin:4px 0">${RN[G.r]} · <span id="min">${m.cur||0}'</span></p><div class="pitch"><span class="ball" id="ball" style="left:50%">⚽</span></div><div id="box"></div></div><div class="card log" id="log">${m.log.join("<br>")}</div>`;
+ app.innerHTML=`<div class="card"><div class="sb"><span>${dot(G.me)}${T[G.me][0]}</span><span class="sc">${m.a} x ${m.b}</span><span>${T[m.opp][0]}${dot(m.opp)}</span></div><p class="mu" style="margin:4px 0">🪙 ${S.tokens} · ${RN[G.r]} · <span id="min">${m.cur||0}'</span></p><div class="pitch"><span class="ball" id="ball" style="left:50%">⚽</span></div><div id="box"></div></div><div class="card log" id="log">${m.log.join("<br>")}</div>`;
 }
 function say(t){M.log.unshift(t);$("log").innerHTML=M.log.join("<br>")}
 function ask(title,color,cb){
- const q=nq();let t=15,done=false;
- $("box").innerHTML=`<span class="tag" style="background:${color}">${title}</span><div class="q">${q.q}</div><div class="bar"><i id="tb"></i></div><div class="opts" style="margin-top:10px">${q.o.map((o,i)=>`<button data-i="${i}">${o}</button>`).join("")}</div>`;
+ const q=nq(),tot=[15,15,12,10][G.r];let t=tot,done=false;
+ $("box").innerHTML=`<span class="tag" style="background:${color}">${title}</span> <span class="tag" style="background:var(--mu)">${["Fácil","Médio","Difícil","Expert"][q.lv]} · ${tot}s</span><div class="q">${q.q}</div><div class="bar"><i id="tb"></i></div><div class="opts" style="margin-top:10px">${q.o.map((o,i)=>`<button data-i="${i}">${o}</button>`).join("")}</div>`;
  const bs=[...$("box").querySelectorAll("button")];
- const fin=(ok,btn)=>{if(done)return;done=true;clearInterval(tm);
+ const fin=(ok,btn)=>{if(done)return;done=true;clearInterval(tm);S.rk.ans++;if(ok)reward(q.lv);else M.streak=0;
   bs.forEach(b=>{b.disabled=true;if(b.textContent==q.c)b.classList.add("ok")});
   if(btn&&!ok)btn.classList.add("no");
   setTimeout(()=>cb(ok),1100)};
  bs.forEach(b=>b.onclick=()=>fin(b.textContent==q.c,b));
- tm=setInterval(()=>{t-=.1;$("tb").style.width=(t/15*100)+"%";if(t<=0)fin(false)},100);
+ tm=setInterval(()=>{t-=.1;$("tb").style.width=(t/tot*100)+"%";if(t<=0)fin(false)},100);
 }
 function moment(){
  if(M.i>=M.mins.length)return endReg();
  const m=M,min=m.mins[m.i++];m.cur=min;$("min").textContent=min+"'";
  const att=R()<.5,pen=.03*G.r;
  $("ball").style.left=att?"80%":"20%";
+ if(att&&R()<.4)return freeKick(min);
  if(att){
   ask("⚔️ ATAQUE! Responda para finalizar","#12803f",ok=>{
-   if(R()<(ok?.75:.1)){m.a++;say(`${min}' ⚽ GOL do ${T[G.me][0]}!`)}
+   if(R()<Math.min(.95,(ok?.75:.1)+bon("A")*.02)){m.a++;say(`${min}' ⚽ GOL do ${T[G.me][0]}!`)}
    else say(`${min}' ${ok?"Chute defendido pelo goleiro.":"Lance perdido, a bola foi para fora."}`);
    draw2();});
  }else{
   ask("🛡️ DEFESA! Responda para evitar o gol","#c0392b",ok=>{
-   if(R()<(ok?.1+pen:.7+pen)){m.b++;say(`${min}' 😬 Gol do ${T[m.opp][0]}.`)}
+   if(R()<Math.max(.02,(ok?.1+pen:.7+pen)-bon("D")*.02)){m.b++;say(`${min}' 😬 Gol do ${T[m.opp][0]}.`)}
    else say(`${min}' ${ok?"Grande desarme, perigo afastado!":"Susto, mas a bola saiu."}`);
    draw2();});
  }
+}
+const VQ=[
+["O Brasil é pentacampeão mundial de futebol.",true,0],["Pelé jogou toda a carreira profissional no Flamengo.",false,0],["A Copa do Mundo de 2014 foi disputada no Brasil.",true,0],["Um time de futebol joga com 12 jogadores em campo.",false,0],["O Maracanã fica na cidade de São Paulo.",false,0],
+["Neymar é o maior artilheiro da história da Seleção Brasileira.",true,1],["A Alemanha venceu o Brasil por 7 a 1 na semifinal de 2014.",true,1],["O Corinthians foi campeão da Libertadores de 2012.",true,1],["Ronaldo foi o artilheiro da Copa de 2002.",true,1],["O Brasil venceu a Copa do Mundo de 2018.",false,1],
+["O Grêmio foi o primeiro campeão da Copa do Brasil.",true,2],["A Libertadores de 1960 foi vencida pelo Santos.",false,2],["Pelé marcou 12 gols em Copas do Mundo.",true,2],["O Cruzeiro é o maior campeão da Copa do Brasil.",true,2],["O Vasco foi campeão da Copa do Brasil de 2011.",true,2],
+["Hakan Şükür fez o gol mais rápido da história das Copas.",true,3],["A Copa do Mundo de 1950 foi vencida pelo Brasil.",false,3],["Messi é o jogador com mais partidas em Copas do Mundo.",true,3],["O Palmeiras venceu a Libertadores de 1999 nos pênaltis.",true,3],["O Cruzeiro foi campeão da Libertadores em 1976 e em 1997.",true,3]];
+function scene(cob){
+ const mc=T[G.me][1],oc=T[M.opp][1];
+ const man=(x,c)=>`<g transform="translate(${x},190)"><circle cx="0" cy="-52" r="8" fill="#f1c9a5"/><rect x="-9" y="-44" width="18" height="30" rx="5" fill="${c}"/><rect x="-8" y="-14" width="6" height="14" fill="#222"/><rect x="2" y="-14" width="6" height="14" fill="#222"/></g>`;
+ return `<svg viewBox="0 0 640 230" style="width:100%;display:block;border-radius:10px;margin:8px 0"><defs><pattern id="net" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M0 0H10M0 0V10" stroke="#ffffff66" stroke-width="1"/></pattern></defs><rect width="640" height="230" fill="#2e8b4a"/><rect width="640" height="70" fill="#1d5c32"/><rect y="196" width="640" height="34" fill="#379953"/><rect x="520" y="80" width="100" height="110" fill="url(#net)" stroke="#fff" stroke-width="4"/><text x="130" y="112" font-size="12" fill="#fff" text-anchor="middle" font-weight="700">${cob}</text><g id="gk" transform="translate(572,190)"><circle cx="0" cy="-52" r="8" fill="#f1c9a5"/><rect x="-10" y="-44" width="20" height="30" rx="5" fill="#f1c40f"/><rect x="-22" y="-42" width="12" height="6" fill="#f1c40f"/><rect x="10" y="-42" width="12" height="6" fill="#f1c40f"/><rect x="-8" y="-14" width="6" height="14" fill="#222"/><rect x="2" y="-14" width="6" height="14" fill="#222"/></g>${[330,350,370,390].map(x=>man(x,oc)).join("")}<g id="kick" transform="translate(120,190)"><circle cx="0" cy="-52" r="8" fill="#f1c9a5"/><rect x="-10" y="-44" width="20" height="30" rx="5" fill="${mc}"/><text x="0" y="-24" font-size="13" text-anchor="middle" fill="#fff" font-weight="700">10</text><rect x="-8" y="-14" width="6" height="14" fill="#222"/><g id="kl" transform="rotate(0 5 -14)"><rect x="2" y="-14" width="7" height="16" fill="#222"/><rect x="1" y="1" width="11" height="4" rx="2" fill="#eee"/></g></g><circle id="bl" cx="150" cy="188" r="7" fill="#fff" stroke="#222" stroke-width="2"/></svg>`;
+}
+function freeKick(min){
+ const lv=Math.min(G.r,3),pl=VQ.filter(v=>v[2]==lv),v=pl[Math.floor(R()*pl.length)],tot=[8,8,6,5][lv];
+ const cob=S.sq.ATA?P.ATA[S.sq.ATA-1][0]:"Camisa 10";
+ $("box").innerHTML=`<span class="tag" style="background:#e67e22">🎯 FALTA PERIGOSA</span> <span class="tag" style="background:var(--mu)">Verdadeiro ou falso · ${tot}s</span>${scene(cob)}<p class="mu" style="margin:4px 0">${cob} ajeita a bola... acerte a pergunta e ele converte!</p><div class="q">${v[0]}</div><div class="bar"><i id="tb"></i></div><div class="opts" style="grid-template-columns:1fr 1fr;margin-top:10px"><button data-v="1">✅ Verdadeiro</button><button data-v="0">❌ Falso</button></div>`;
+ let t=tot,done=false;
+ const bs=[...$("box").querySelectorAll("button")];
+ const fin=(ans,btn)=>{if(done)return;done=true;clearInterval(tm);
+  const ok=ans===v[1];
+  bs.forEach(b=>{b.disabled=true;if((b.dataset.v=="1")===v[1])b.classList.add("ok")});
+  if(btn&&!ok)btn.classList.add("no");
+  S.rk.ans++;if(ok)reward(lv);else M.streak=0;
+  shoot(ok,min)};
+ bs.forEach(b=>b.onclick=()=>fin(b.dataset.v=="1",b));
+ tm=setInterval(()=>{t-=.1;$("tb").style.width=(t/tot*100)+"%";if(t<=0)fin(null)},100);
+}
+function shoot(ok,min){
+ const bl=$("bl"),kl=$("kl"),kk=$("kick"),gk=$("gk"),m=M,A=[145,188];
+ const pos=(x,y)=>{bl.setAttribute("cx",x);bl.setAttribute("cy",y)};
+ const fly=(a,c,b,ms,cb)=>{const t0=performance.now();(function f(n){const u=Math.min(1,(n-t0)/ms),w=1-u;pos(w*w*a[0]+2*w*u*c[0]+u*u*b[0],w*w*a[1]+2*w*u*c[1]+u*u*b[1]);if(u<1)requestAnimationFrame(f);else if(cb)cb()})(t0)};
+ const out=ok?"gol":["barreira","trave","defesa","fora"][Math.floor(R()*4)];
+ const end=()=>setTimeout(()=>{
+  if(ok){m.a++;say(`${min}' ⚽ GOLAÇO de falta do ${T[G.me][0]}!`)}
+  else say(`${min}' ${out=="barreira"?"A bola bateu na barreira.":out=="trave"?"Na trave! Que azar!":out=="defesa"?"O goleiro fez uma grande defesa.":"A bola passou por cima do gol."}`);
+  draw2()},1000);
+ kl.setAttribute("transform","rotate(55 5 -14)");
+ setTimeout(()=>{
+  kk.setAttribute("transform","translate(132,190)");kl.setAttribute("transform","rotate(-70 5 -14)");
+  if(out=="gol"){gk.setAttribute("transform","translate(590,185) rotate(50)");fly(A,[360,10],[575,105],900,end)}
+  else if(out=="defesa"){gk.setAttribute("transform","translate(548,172) rotate(-60)");fly(A,[360,30],[552,128],900,end)}
+  else if(out=="trave")fly(A,[360,5],[520,80],850,()=>fly([520,80],[500,110],[465,170],350,end));
+  else if(out=="fora")fly(A,[360,-10],[600,40],900,end);
+  else fly(A,[240,170],[333,150],450,()=>fly([333,150],[300,110],[250,192],450,end));
+ },500);
 }
 function draw2(){
  const m=M,l=m.log;draw();m.log=l;$("log").innerHTML=l.join("<br>");$("min").textContent=m.cur+"'";
@@ -209,11 +378,18 @@ function penalty(){
 }
 function finish(won){
  const m=M;
+ let bonus=0;if(won){bonus=40+20*G.r;if(G.r==3)bonus+=200;if(m.b==0)bonus+=30}
+ S.tokens+=bonus;G.earn+=bonus;
+ const k=S.rk,t0=tier(k.pts);let rp=0;k.played++;
+ if(won){k.wins++;rp=20+10*G.r;if(G.r==3){rp+=100;k.titles++}}else rp=5*(G.r+1);
+ k.pts+=rp;G.pts=(G.pts||0)+rp;
+ if(!won||G.r==3){k.hist.push({t:G.me,f:won?"Campeão":RN[G.r],p:G.pts,d:new Date().toLocaleDateString("pt-BR")});k.hist.sort((a,b)=>b.p-a.p);k.hist=k.hist.slice(0,5)}
+ const t1=tier(k.pts);sv();
  const sc=m.pn?`${m.a} x ${m.b} (pên. ${m.pa} x ${m.pb})`:`${m.a} x ${m.b}`;
  const winners=G.pairs.map(p=>p.includes(G.me)?(won?G.me:m.opp):(R()<.5?p[0]:p[1]));
  G.res[G.r]=winners;
  const last=G.r==3;
- let h=`<h1>${won?"🏆 Vitória!":"Eliminado"}</h1><div class="card"><p>${T[G.me][0]} ${sc} ${T[m.opp][0]}</p>`;
+ let h=`<h1>${won?"🏆 Vitória!":"Eliminado"}</h1><div class="card"><p>${T[G.me][0]} ${sc} ${T[m.opp][0]}</p><p class="mu">🪙 +${G.earn} tokens nesta fase (bônus de resultado: +${bonus}) · Saldo: ${S.tokens}</p><p class="mu">⭐ Rank: ${k.pts} pts (+${rp} pelo resultado) · ${t1.n}${t1.i>t0.i?" · 🎉 Você subiu para "+t1.n+"!":""}</p>`;
  if(!won)h+=`<p>Seu time caiu nas ${RN[G.r].toLowerCase()}. Campeão desta edição: ${T[simulate(winners)][0]}.</p><button class="pri" onclick="showTree()">Ver chaveamento completo</button> <button onclick="menu()">Jogar de novo</button>`;
  else if(last)h+=`<p style="font-size:1.3rem">🏆 ${T[G.me][0]} é o campeão da Copa do Brasil!</p><button class="pri" onclick="showTree()">Ver chaveamento completo</button> <button onclick="menu()">Jogar de novo</button>`;
  else h+=`<p>${T[G.me][0]} avança para a próxima fase.</p><button class="pri" onclick="nextR()">Ver chaveamento</button>`;
